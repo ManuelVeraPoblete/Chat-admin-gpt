@@ -1,0 +1,13 @@
+<div class="card">
+  <h3 class="title">{{ title }}</h3>
+
+  <div class="list">
+    <div class="row" *ngFor="let it of items">
+      <div class="left">
+        <mat-icon class="ico" [ngClass]="cssFor(it.status)">{{ iconFor(it.status) }}</mat-icon>
+        <span class="stmt">{{ it.statement }}</span>
+      </div>
+      <span class="time">{{ it.relativeTime }}</span>
+    </div>
+  </div>
+</div>

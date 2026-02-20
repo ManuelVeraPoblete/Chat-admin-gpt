@@ -1,0 +1,232 @@
+<app-top-nav (refresh)="onRefresh()"></app-top-nav>
+
+<div class="page">
+  <div class="header-card">
+    <div class="left">
+      <mat-icon>description</mat-icon>
+      <span class="title">Logs</span>
+    </div>
+
+    <div class="stats" *ngIf="facade.data() as vm">
+      <span>Total Líneas: <b>{{ vm.total }}</b></span>
+      <span>Último Evento: <b>{{ (vm.lastEventAt ? (vm.lastEventAt | date:'yyyy-MM-dd HH:mm:ss') : '-') }}</b></span>
+    </div>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="wide">
+      <mat-label>Buscar...</mat-label>
+      <input matInput [formControl]="qCtrl" (keyup.enter)="onApplyFilters()" />
+      <button mat-icon-button matSuffix (click)="onApplyFilters()" aria-label="Buscar">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nivel</mat-label>
+      <mat-select [formControl]="levelCtrl">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="INFO">INFO</mat-option>
+        <mat-option value="WARN">WARN</mat-option>
+        <mat-option value="ERROR">ERROR</mat-option>
+        <mat-option value="DEBUG">DEBUG</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Desde</mat-label>
+      <input matInput [matDatepicker]="dpFrom" [formControl]="fromCtrl" />
+      <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
+      <mat-datepicker #dpFrom></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hasta</mat-label>
+      <input matInput [matDatepicker]="dpTo" [formControl]="toCtrl" />
+      <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
+      <mat-datepicker #dpTo></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-stroked-button class="btn" (click)="onApplyFilters()">
+      <mat-icon>filter_alt</mat-icon>
+      Aplicar
+    </button>
+  </div>
+
+  <div class="table-wrap" *ngIf="!facade.loading(); else loadingTpl">
+    <div class="error" *ngIf="facade.error() as err">{{ err }}</div>
+
+    <table
+      mat-table
+      [dataSource]="buildTableRows(facade.data()?.items ?? [])"
+      [multiTemplateDataRows]="true"
+      class="table"
+    >
+      <!-- Expand -->
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef class="col-details"></th>
+        <td mat-cell *matCellDef="let row" class="col-details">
+          <ng-container *ngIf="!row.__detail">
+            <button
+              mat-icon-button
+              class="icon-btn"
+              (click)="toggleRowDetails(row.index)"
+              [attr.aria-label]="isExpanded(row.index) ? 'Contraer detalle' : 'Expandir detalle'"
+            >
+              <mat-icon>{{ isExpanded(row.index) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- Index -->
+      <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef class="col-index">N°</th>
+        <td mat-cell *matCellDef="let row" class="col-index">{{ row.index }}</td>
+      </ng-container>
+
+      <!-- Date (legible) -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef class="col-date">Fecha</th>
+        <td mat-cell *matCellDef="let row" class="col-date">
+          {{ row.timestamp | date:'yyyy-MM-dd' }}
+        </td>
+      </ng-container>
+
+      <!-- Time (legible) -->
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef class="col-time">Hora</th>
+        <td mat-cell *matCellDef="let row" class="col-time">
+          {{ row.timestamp | date:'HH:mm:ss' }}
+        </td>
+      </ng-container>
+
+      <!-- Level -->
+      <ng-container matColumnDef="level">
+        <th mat-header-cell *matHeaderCellDef class="col-level">Nivel</th>
+        <td mat-cell *matCellDef="let row" class="col-level">
+          <span [class]="levelClass(row.level)">{{ row.level }}</span>
+        </td>
+      </ng-container>
+
+      <!-- service (desde raw) -->
+      <ng-container matColumnDef="service">
+        <th mat-header-cell *matHeaderCellDef class="col-service">Service</th>
+        <td mat-cell *matCellDef="let row" class="col-service">
+          {{ parsed(row)?.service ?? '-' }}
+        </td>
+      </ng-container>
+
+      <!-- type (desde raw) -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef class="col-type">Type</th>
+        <td mat-cell *matCellDef="let row" class="col-type">
+          {{ parsed(row)?.type ?? '-' }}
+        </td>
+      </ng-container>
+
+      <!-- method (desde raw) -->
+      <ng-container matColumnDef="method">
+        <th mat-header-cell *matHeaderCellDef class="col-method">Method</th>
+        <td mat-cell *matCellDef="let row" class="col-method">
+          {{ parsed(row)?.method ?? '-' }}
+        </td>
+      </ng-container>
+
+      <!-- url (desde raw) -->
+      <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef class="col-url">URL</th>
+        <td mat-cell *matCellDef="let row" class="col-url">
+          <span class="ellipsis" [matTooltip]="parsed(row)?.url ?? ''" matTooltipShowDelay="250">
+            {{ parsed(row)?.url ?? '-' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- ip (desde raw) -->
+      <ng-container matColumnDef="ip">
+        <th mat-header-cell *matHeaderCellDef class="col-ip">IP</th>
+        <td mat-cell *matCellDef="let row" class="col-ip">
+          {{ parsed(row)?.ip ?? '-' }}
+        </td>
+      </ng-container>
+
+      <!-- traceId (desde raw) -->
+      <ng-container matColumnDef="traceId">
+        <th mat-header-cell *matHeaderCellDef class="col-trace">TraceId</th>
+        <td mat-cell *matCellDef="let row" class="col-trace">
+          <span class="ellipsis" [matTooltip]="parsed(row)?.traceId ?? ''" matTooltipShowDelay="250">
+            {{ parsed(row)?.traceId ?? '-' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- userId (desde raw) -->
+      <ng-container matColumnDef="userId">
+        <th mat-header-cell *matHeaderCellDef class="col-userid">UserId</th>
+        <td mat-cell *matCellDef="let row" class="col-userid">
+          <span class="ellipsis" [matTooltip]="(parsed(row)?.userId ?? '')" matTooltipShowDelay="250">
+            {{ parsed(row)?.userId ?? '-' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- message -->
+      <ng-container matColumnDef="message">
+        <th mat-header-cell *matHeaderCellDef class="col-message">Mensaje</th>
+        <td mat-cell *matCellDef="let row" class="col-message">
+          <span class="ellipsis" [matTooltip]="row.message" matTooltipShowDelay="250">
+            {{ row.message }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Detail row (colspan total) -->
+      <ng-container matColumnDef="detailRow">
+        <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+          <div class="detail" *ngIf="isExpanded(row.parent.index)">
+            <div class="detail-header">
+              <mat-icon>data_object</mat-icon>
+              <span>Detalle completo</span>
+            </div>
+
+            <ng-container *ngIf="parsed(row.parent) as obj; else rawFallback">
+              <pre class="json">{{ prettyJson(obj) }}</pre>
+            </ng-container>
+
+            <ng-template #rawFallback>
+              <pre class="json">{{ row.parent.raw }}</pre>
+            </ng-template>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      <!-- Normal row -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns; when: isNormalRow"></tr>
+
+      <!-- Detail row -->
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['detailRow']; when: isDetailRow"
+        class="detail-row"
+      ></tr>
+    </table>
+
+    <mat-paginator
+      [length]="facade.data()?.total ?? 0"
+      [pageIndex]="0"
+      [pageSize]="25"
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      (page)="onPage($event)"
+    ></mat-paginator>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p>Cargando logs...</p>
+    </div>
+  </ng-template>
+</div>

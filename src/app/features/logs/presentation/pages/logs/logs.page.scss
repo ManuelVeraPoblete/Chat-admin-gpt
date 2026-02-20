@@ -1,0 +1,250 @@
+.page {
+  min-height: calc(100vh - 64px);
+  padding: 18px 18px 24px;
+  background: radial-gradient(circle at 20% 10%, rgba(60, 140, 255, 0.20), transparent 45%),
+              linear-gradient(180deg, #071a35 0%, #061225 100%);
+  color: #e8eefc;
+}
+
+.header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 26, 56, 0.55);
+  padding: 14px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+
+  .left { display: flex; align-items: center; gap: 10px; }
+  .title { font-weight: 900; font-size: 18px; }
+  .stats { display: flex; gap: 18px; flex-wrap: wrap; opacity: 0.95; }
+}
+
+.filters {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 180px 200px 200px 140px;
+  gap: 12px;
+  align-items: center;
+
+  .wide { width: 100%; }
+}
+
+.btn {
+  border-radius: 12px;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #e8eefc !important;
+}
+.btn.danger { border-color: rgba(255, 80, 80, 0.35) !important; }
+
+/* ================================
+   ✅ FIX Material inputs en dark UI
+   - Texto y labels blancos
+   - Placeholder blanco con opacidad
+   - Icons/suffix blancos
+   - Select value blanco
+   ================================ */
+:host ::ng-deep {
+  /* Contorno y color general del form-field (MDC) */
+  .mat-mdc-form-field {
+    --mdc-filled-text-field-input-text-color: #e8eefc;
+    --mdc-outlined-text-field-input-text-color: #e8eefc;
+
+    /* Label */
+    --mdc-filled-text-field-label-text-color: rgba(232, 238, 252, 0.85);
+    --mdc-outlined-text-field-label-text-color: rgba(232, 238, 252, 0.85);
+
+    /* Focus label */
+    --mdc-filled-text-field-focus-label-text-color: #e8eefc;
+    --mdc-outlined-text-field-focus-label-text-color: #e8eefc;
+
+    /* Placeholder */
+    --mdc-filled-text-field-input-text-placeholder-color: rgba(232, 238, 252, 0.60);
+    --mdc-outlined-text-field-input-text-placeholder-color: rgba(232, 238, 252, 0.60);
+
+    /* Caret */
+    --mdc-filled-text-field-caret-color: #e8eefc;
+    --mdc-outlined-text-field-caret-color: #e8eefc;
+
+    /* Outline / border */
+    --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.25);
+    --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.35);
+    --mdc-outlined-text-field-focus-outline-color: rgba(110, 180, 255, 0.85);
+
+    /* Background de la caja */
+    --mdc-filled-text-field-container-color: rgba(10, 26, 56, 0.35);
+    --mdc-outlined-text-field-container-color: rgba(10, 26, 56, 0.20);
+  }
+
+  /* Input real */
+  .mat-mdc-input-element {
+    color: #e8eefc !important;
+    caret-color: #e8eefc !important;
+  }
+
+  /* Placeholder (por si no toma tokens en algunos browsers) */
+  .mat-mdc-input-element::placeholder {
+    color: rgba(232, 238, 252, 0.60) !important;
+    opacity: 1 !important;
+  }
+
+  /* Texto del select */
+  .mat-mdc-select-value,
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-min-line {
+    color: #e8eefc !important;
+  }
+
+  /* Flecha del select */
+  .mat-mdc-select-arrow {
+    color: rgba(232, 238, 252, 0.85) !important;
+  }
+
+  /* Iconos (suffix/prefix) */
+  .mat-mdc-form-field-icon-suffix,
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-icon-button,
+  .mat-icon {
+    color: rgba(232, 238, 252, 0.90) !important;
+  }
+
+  /* Hint y errores */
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    color: rgba(232, 238, 252, 0.80) !important;
+  }
+
+  /* Datepicker toggle */
+  .mat-datepicker-toggle-default-icon {
+    color: rgba(232, 238, 252, 0.90) !important;
+  }
+}
+
+/**
+ * ✅ Clave tabla completa:
+ * - overflow auto + min-width para que no se aplaste
+ */
+.table-wrap {
+  margin-top: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 26, 56, 0.35);
+  overflow: auto;
+  max-width: 100%;
+}
+
+.table {
+  width: 100%;
+  min-width: 1650px;
+  color: #e8eefc;
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(232, 238, 252, 0.88);
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  td {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-weight: 650;
+    white-space: nowrap;
+  }
+}
+
+.col-details { width: 48px; }
+.col-index { width: 60px; }
+.col-date { width: 120px; }
+.col-time { width: 110px; }
+.col-level { width: 100px; }
+.col-service { width: 140px; }
+.col-type { width: 170px; }
+.col-method { width: 90px; }
+.col-url { width: 320px; }
+.col-ip { width: 140px; }
+.col-trace { width: 260px; }
+.col-userid { width: 220px; }
+.col-message { width: 360px; }
+
+.ellipsis {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 900;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+}
+.badge.info { background: rgba(0, 180, 140, 0.55); }
+.badge.warn { background: rgba(255, 170, 0, 0.60); color: #1a1405; }
+.badge.error { background: rgba(255, 70, 70, 0.60); }
+.badge.debug { background: rgba(120, 180, 255, 0.55); }
+.badge.unknown { background: rgba(255, 255, 255, 0.12); }
+
+.loading { min-height: 45vh; display: grid; place-items: center; gap: 10px; }
+
+.error {
+  margin: 10px 12px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 80, 80, 0.18);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.detail-row td {
+  padding: 0 !important;
+  border-top: none !important;
+  white-space: normal;
+}
+
+.detail {
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.18);
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  opacity: 0.95;
+  margin-bottom: 10px;
+}
+
+.json {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(10, 26, 56, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  overflow: auto;
+  max-height: 380px;
+  white-space: pre;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+@media (max-width: 1200px) {
+  .filters { grid-template-columns: 1fr; }
+  .token-card { grid-template-columns: 1fr; }
+  .table { min-width: 1400px; }
+}

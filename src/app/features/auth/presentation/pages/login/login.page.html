@@ -1,0 +1,29 @@
+<div class="wrap">
+  <mat-card class="card">
+    <div class="title">
+      <mat-icon>lock</mat-icon>
+      <h2>Acceso Dashboard</h2>
+    </div>
+
+    <p class="subtitle">Inicia sesión para ver logs (requiere permisos).</p>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" autocomplete="username" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="current-password" />
+      </mat-form-field>
+
+      <button mat-raised-button class="btn" type="submit" [disabled]="loading">
+        <mat-icon>login</mat-icon>
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+  </mat-card>
+</div>

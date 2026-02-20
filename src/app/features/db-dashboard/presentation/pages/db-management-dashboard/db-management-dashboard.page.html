@@ -1,0 +1,26 @@
+<app-top-nav (refresh)="onRefresh()"></app-top-nav>
+
+<div class="page">
+  <div class="title-bar" *ngIf="facade.data() as vm; else loadingTpl">
+    <h1 class="page-title">{{ vm.pageTitle }}</h1>
+
+    <section class="grid">
+      <app-db-panel class="panel" [metrics]="vm.leftPanel"></app-db-panel>
+      <app-db-panel class="panel" [metrics]="vm.rightPanel"></app-db-panel>
+    </section>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading" *ngIf="facade.loading(); else errorTpl">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p>Cargando dashboard...</p>
+    </div>
+  </ng-template>
+
+  <ng-template #errorTpl>
+    <div class="error" *ngIf="facade.error() as err">
+      <p>{{ err }}</p>
+      <button class="btn" type="button" (click)="onRefresh()">Reintentar</button>
+    </div>
+  </ng-template>
+</div>

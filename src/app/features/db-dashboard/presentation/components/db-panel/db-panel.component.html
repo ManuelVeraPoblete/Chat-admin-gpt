@@ -1,0 +1,67 @@
+<mat-card class="panel">
+  <div class="panel-header">
+    <div class="panel-title">
+      <mat-icon class="db-icon">{{ icon }}</mat-icon>
+      <h2>{{ metrics.title }}</h2>
+    </div>
+
+    <div class="status">
+      <span class="label">Status :</span>
+      <span class="value">{{ statusLabel }}</span>
+      <span class="dot" [class.ok]="statusDotClass==='ok'" [class.down]="statusDotClass==='down'"></span>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <app-stat-tile
+      [label]="metrics.collectionsOrTablesLabel"
+      [value]="metrics.collectionsOrTablesCount | number"
+      icon="view_list"
+    ></app-stat-tile>
+
+    <app-stat-tile
+      [label]="metrics.documentsOrRecordsLabel"
+      [value]="metrics.documentsOrRecordsCount | number"
+      icon="description"
+    ></app-stat-tile>
+
+    <app-stat-tile
+      [label]="metrics.storageSizeLabel"
+      [value]="metrics.storageSizeValue"
+      icon="sd_storage"
+    ></app-stat-tile>
+  </div>
+
+  <div class="block">
+    <h3 class="block-title">{{ metrics.barChartTitle }}</h3>
+    <div class="charts">
+      <app-bar-chart class="chart" [items]="metrics.barItems"></app-bar-chart>
+      <app-donut-chart
+        class="chart donut"
+        [title]="metrics.donutTitle"
+        [percent]="metrics.donutPercent"
+        [secondaryLabel]="metrics.donutSecondaryLabel"
+        [secondaryPercent]="metrics.donutSecondaryPercent"
+      ></app-donut-chart>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="block-title">Table Stats</h3>
+    <div class="line-wrap">
+      <app-line-chart [title]="metrics.lineTitle" [points]="metrics.linePoints"></app-line-chart>
+    </div>
+  </div>
+
+  <div class="block grid-2">
+    <app-recent-operations
+      [title]="metrics.recentOperationsTitle"
+      [items]="metrics.recentOperations"
+    ></app-recent-operations>
+
+    <app-query-performance
+      [title]="metrics.queryPerformanceTitle"
+      [items]="metrics.queryPerformance"
+    ></app-query-performance>
+  </div>
+</mat-card>

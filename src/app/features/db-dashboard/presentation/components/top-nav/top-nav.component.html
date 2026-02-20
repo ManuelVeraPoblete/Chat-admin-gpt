@@ -1,0 +1,35 @@
+<mat-toolbar class="topbar" color="primary">
+  <div class="nav-left">
+    <a mat-button class="nav-item" routerLink="/db-dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>home</mat-icon>
+      <span>Dashboard</span>
+    </a>
+
+    <a mat-button class="nav-item" routerLink="/logs" routerLinkActive="active">
+      <mat-icon>description</mat-icon>
+      <span>Logs</span>
+    </a>
+
+    <button mat-button class="nav-item" disabled>
+      <mat-icon>group</mat-icon>
+      <span>User Management</span>
+    </button>
+
+    <button mat-button class="nav-item" disabled>
+      <mat-icon>backup</mat-icon>
+      <span>Backups</span>
+    </button>
+
+    <button mat-button class="nav-item" disabled>
+      <mat-icon>settings</mat-icon>
+      <span>Settings</span>
+    </button>
+  </div>
+
+  <span class="spacer"></span>
+
+  <button mat-stroked-button class="refresh" (click)="onRefresh()">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
+</mat-toolbar>
